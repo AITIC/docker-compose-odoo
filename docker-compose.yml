@@ -1,0 +1,32 @@
+version: '2'
+services:
+  odoo_13:
+    container_name: odoo_13
+    image: odoo:13.0
+    depends_on:
+      - db_odoo
+    ports:
+      - "8070:8069" # se especifica el puerto por el cual vamos a dar salida a Odoo
+    volumes:
+       - odoo-web-13:/var/lib/odoo
+       - ./config:/etc/odoo
+       - ./extra-addons:/mnt/extra-addons
+    links:
+      - db_odoo:db
+    restart: always
+  db_odoo:
+    container_name: postgresql_12
+    image: postgres:12.5
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5442:5432" # se especifica el puerto por el cual vamos a dar salida a Postgres
+    volumes:
+      - odoo-db-13:/var/lib/postgresql/data/pgdata
+    restart: always
+volumes:
+  odoo-web-13:
+  odoo-db-13:
